@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'terraform' }
+  agent { label 'infrastructur' }
 
   environment {
     AWS_ACCESS_KEY_ID     = credentials('accessKeyid')
@@ -9,7 +9,7 @@ pipeline {
   stages {
     stage('Provisioning Servers') {
       steps {
-        dir('infrastructure/terraform') {
+        dir('terraform/') {
           sh 'terraform init'
           echo 'Provisioning servers...'
         }
