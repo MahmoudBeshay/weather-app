@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build image') {
+            steps {
+                echo 'Builiding image'
+                sh docker build -t mahmoudbeshay/weatherapp:1.0
+                withCredentials([usernamePassword(credentialsId: 'dockerCred', usernameVariable: 'user', passwordVariable: 'password')]) {
+                       echo "${password}" | docker login -u "${user}" --password-stdin      
+            }
+            docker push mahmoudbeshay/weatherapp:1.0
+        }
+    }
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+    stages {
+        stage('Hello') {
+            steps {
+                echo 'Hello World'
+            }
+        }
+    }
+}
