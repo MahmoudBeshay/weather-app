@@ -1,4 +1,3 @@
-#this is a Jenkins pipeline script to deploy infrastructure by terraform and ansible
 
 pipeline {
     
@@ -29,4 +28,5 @@ pipeline {
             }
         }
     }
+}
 }
