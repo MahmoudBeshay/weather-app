@@ -1,0 +1,58 @@
+- name: Initialize Kubernetes Master
+  hosts: k8s_master
+  become: yes
+  tasks:
+    - name: Ensure containerd is running
+      service:
+        name: containerd
+        state: started
+        enabled: yes
+    - name: Pull Kubernetes container images
+      command: kubeadm config images pull
+    - name: Initialize Kubernetes master
+      command: kubeadm init --pod-network-cidr=10.244.0.0/16
+      register: kubeadm_init
+    - name: Create .kube directory
+      file:
+        path: /home/ubuntu/.kube
+        state: directory
+        mode: '0755'
+        owner: ubuntu
+        group: ubuntu
+    - name: Copy kubeconfig to user
+      copy:
+        src: /etc/kubernetes/admin.conf
+        dest: /home/ubuntu/.kube/config
+        remote_src: yes
+        owner: ubuntu
+        group: ubuntu
+        mode: '0600'
+    - name: Ensure user owns their kube config
+      file:
+        path: /home/ubuntu/.kube/config
+        owner: "ubuntu"
+        group: "ubuntu"
+        mode: '0600'
+    - name: Install Flannel CNI
+      command: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
+    - name: Download Helm key
+      get_url:
+        url: https://baltocdn.com/helm/signing.asc
+        dest: /etc/apt/keyrings/helm.key
+        mode: '0644'
+    - name: Convert Helm key to GPG
+      command: gpg --dearmor -o /etc/apt/keyrings/helm.gpg /etc/apt/keyrings/helm.key
+      args:
+        creates: /etc/apt/keyrings/helm.gpg
+    - name: Add Helm repo
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main"
+        state: present
+        filename: helm
+        update_cache: yes
+    - name: Install Helm
+      apt:
+        name: helm
+        state: present
