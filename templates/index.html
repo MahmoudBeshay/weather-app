@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #74ebd5, #acb6e5);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+        .shadow-sm {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }      
+
+        .weather-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .weather-card h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container text-center">
+        <div class="d-flex flex-column align-items-center justify-content-center">
+            <div class="weather-card mb-4">
+                <h1 class="text-center">🌤️ Weather App</h1>
+                <form method="POST" class="mb-3">
+                    <div class="input-group">
+                        <input type="text" name="city" class="form-control" placeholder="Enter City" required>
+                        <button class="btn btn-primary" type="submit">Get Weather</button>
+                    </div>
+                </form>
+
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                {% endif %}
+
+                {% if weather %}
+                    <div class="mt-4">
+                        <h4 class="text-success">Weather in {{ weather.city }}, {{ weather.state }}{{ ", " + weather.country if weather.country }}</h4>
+                        <ul class="list-group">
+                            <li class="list-group-item">🌡️ Temperature: {{ weather.temperature }} °C</li>
+                            <li class="list-group-item">🌥️ Description: {{ weather.description }}</li>
+                            <li class="list-group-item">💧 Humidity: {{ weather.humidity }}%</li>
+                            <li class="list-group-item">💨 Wind Speed: {{ weather.wind_speed }} km/h</li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+
+           {% if forecast %}
+    <div class="mt-4 text-center">
+        <h4 class="text-primary mb-3">3-Day Forecast</h4>
+            <div class="d-flex justify-content-center overflow-auto gap-2 px-2">
+                {% for day in forecast %}
+                    <div class="bg-white rounded shadow-sm text-center px-3 py-2" style="min-width: 120px; max-width: 140px;">
+                        <small class="text-muted">{{ day.date }}</small>
+                        <img src="{{ day.icon }}" alt="icon" width="40" class="my-1">
+                        <div style="font-size: 0.85rem;">{{ day.desc }}</div>
+                    <div class="fw-bold">{{ day.avgtemp }}°C</div>
+            </div>
+                {% endfor %}
+    </div>
+    </div>
+                {% endif %}
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
