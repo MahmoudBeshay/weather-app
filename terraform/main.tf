@@ -164,16 +164,4 @@ resource "aws_instance" "k8s_nodes" {
     Role = count.index == 0 ? "master" : "worker"
   }
 }
-abdelrahman@DESKTOP-832EB38:~/ansible-project/terraform-k8s$ ls
-main.tf  outputs.tf  provider.tf  terraform.tfstate  terraform.tfstate.backup  variables.tf
-abdelrahman@DESKTOP-832EB38:~/ansible-project/terraform-k8s$ cat outputs.tf
-output "bastion_public_ip" {
-  description = "Public IP of the Bastion host"
-  value       = aws_instance.bastion.public_ip
-}
- 
-output "k8s_private_ips" {
-  description = "Private IPs of the Kubernetes nodes"
-  value       = [for instance in aws_instance.k8s_nodes : instance.private_ip]
-}
- 
+
