@@ -1,5 +1,5 @@
 pipeline {
-  agent { label 'infrastructur' }
+  agent { label 'infrastructer' }
 
   environment {
     AWS_ACCESS_KEY_ID     = credentials('accessKeyid')
