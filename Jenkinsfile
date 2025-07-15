@@ -31,7 +31,7 @@ pipeline {
 
     stage('dynamic inventory') {
       steps {
-        sleep(time: 30) // Wait for Terraform to finish provisioning
+        //sleep(time: 30) // Wait for Terraform to finish provisioning
         echo 'Generating dynamic inventory...'
         sh './inventorygen.sh' 
         sh 'cat ansible/ansible-playbook/inventory.ini'
@@ -40,13 +40,12 @@ pipeline {
 
     stage('configure using Ansible') {
       steps {
-        withCredentials([string(credentialsId: 'ansibleKey', variable: 'PRIVATE_KEY')]) {
-          sh '''
-            mkdir -p ansible
-            echo "$PRIVATE_KEY" > $PRIVATE_KEY_FILE
-            chmod 600 $PRIVATE_KEY_FILE
-          '''
-        }
+withCredentials([string(credentialsId: 'ansibleKey', variable: 'PRIVATE_KEY')]) {
+  writeFile file: env.PRIVATE_KEY_FILE, text: PRIVATE_KEY
+  sh "chmod 600 $PRIVATE_KEY_FILE"
+  sh " cat $PRIVATE_KEY_FILE"
+}
+
       }
     }
    stage('Run Ansible Playbooks') {
