@@ -30,8 +30,8 @@ pipeline {
       steps {
         sleep(time: 30) // Wait for Terraform to finish provisioning
         echo 'Generating dynamic inventory...'
-        sh 'cd .. && ./inventorygen.sh' 
-        sh 'cat ../ansible/ansible-playbook/inventory.ini'
+        sh './inventorygen.sh' 
+        sh 'cat ansible/ansible-playbook/inventory.ini'
       }
     }
 
