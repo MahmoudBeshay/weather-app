@@ -39,19 +39,19 @@ pipeline {
     }
 
     stage('Configure Using Ansible') {
-      steps {
-        withCredentials([string(credentialsId: 'ansibleKey', variable: 'PRIVATE_KEY')]) {
-        script {
-        writeFile file: env.PRIVATE_KEY_FILE, text: PRIVATE_KEY
-        }
-        sh '''
-        chmod 600 $PRIVATE_KEY_FILE
-        echo "Key preview:"
-        head -n 3 $PRIVATE_KEY_FILE
-        '''
+  steps {
+    withCredentials([sshUserPrivateKey(credentialsId: 'ansibleSSHKey', keyFileVariable: 'SSH_KEY_FILE')]) {
+      sh '''
+        echo "[INFO] SSH key is at: $SSH_KEY_FILE"
+        mkdir -p ansible
+        cp $SSH_KEY_FILE ansible/k8s.pem
+        chmod 600 ansible/k8s.pem
+        head -n 2 ansible/k8s.pem
+      '''
     }
   }
 }
+
 
    stage('Run Ansible Playbooks') {
       steps {
