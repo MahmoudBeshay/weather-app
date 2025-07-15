@@ -18,8 +18,7 @@ pipeline {
                 terraform init
                 echo 'Provisioning servers...'
                 terraform apply -auto-approve -var="public_key=$PUBLIC_KEY"
-                terraform destroy -auto-approve -var="public_key=$PUBLIC_KEY"
-            
+           
               '''
             }
           }
@@ -27,9 +26,12 @@ pipeline {
       }
     }
 
-    stage('Test') {
+    stage('dynamic inventory') {
       steps {
-        echo 'Testing...'
+        sleep(secs: 30) // Wait for Terraform to finish provisioning
+        echo 'Generating dynamic inventory...'
+        sh 'cd .. && ./inventorygen.sh' 
+        sh 'cat ../ansible/ansible-playbook/inventory.ini'
       }
     }
 
