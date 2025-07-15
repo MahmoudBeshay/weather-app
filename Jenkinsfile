@@ -12,6 +12,7 @@ pipeline {
         dir('terraform/') {
           sh 'terraform init'
           echo 'Provisioning servers...'
+          sh 'terraform apply -auto-approve'
         }
       }
     }
