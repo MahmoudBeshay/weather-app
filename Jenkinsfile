@@ -1,5 +1,5 @@
 pipeline {
-  
+  agent any 
 
   environment {
     AWS_ACCESS_KEY_ID     = credentials('accessKeyid')
