@@ -7,6 +7,15 @@ pipeline {
   }
 
   stages {
+    stage('Validate AWS Credentials') {
+     steps {
+    sh '''
+      echo "Testing AWS credentials..."
+      aws sts get-caller-identity
+    '''
+  }
+}
+
     stage('Provisioning Servers') {
       steps {
         dir('terraform/') {
