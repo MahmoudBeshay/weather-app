@@ -4,7 +4,7 @@ cd terraform
 BASTION_IP=$(terraform output -raw bastion_public_ip)
 PRIVATE_IPS=($(terraform output -json k8s_private_ips | jq -r '.[]'))
  
-cat > ../ansible/ansible-playbook/inventory.ini <<EOF
+cat > ansible/ansible-playbook/inventory.ini <<EOF
 [bastion]
 bastion ansible_host=$BASTION_IP ansible_user=ubuntu ansible_ssh_private_key_file=../k8s-key.pem
 [k8s_master]
