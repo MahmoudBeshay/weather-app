@@ -38,16 +38,21 @@ pipeline {
       }
     }
 
-    stage('configure using Ansible') {
+    stage('Configure Using Ansible') {
       steps {
-withCredentials([string(credentialsId: 'ansibleKey', variable: 'PRIVATE_KEY')]) {
-  writeFile file: env.PRIVATE_KEY_FILE, text: PRIVATE_KEY
-  sh "chmod 600 $PRIVATE_KEY_FILE"
-  sh " cat $PRIVATE_KEY_FILE"
+        withCredentials([string(credentialsId: 'ansibleKey', variable: 'PRIVATE_KEY')]) {
+        script {
+        writeFile file: env.PRIVATE_KEY_FILE, text: PRIVATE_KEY
+        }
+        sh '''
+        chmod 600 $PRIVATE_KEY_FILE
+        echo "Key preview:"
+        head -n 3 $PRIVATE_KEY_FILE
+        '''
+    }
+  }
 }
 
-      }
-    }
    stage('Run Ansible Playbooks') {
       steps {
         dir('ansible/ansible-playbook') {
