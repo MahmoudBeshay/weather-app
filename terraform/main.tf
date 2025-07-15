@@ -136,7 +136,12 @@ resource "aws_security_group" "k8s_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
- 
+#import key pair name blue    
+resource "aws_key_pair" "k8s_key" {
+  key_name   = var.key_name
+  public_key = var.public_key
+}
+
 # Bastion Host (Public Subnet)
 resource "aws_instance" "bastion" {
   ami                    = "ami-05ec1e5f7cfe5ef59" # Ubuntu 22.04 LTS (verify region)

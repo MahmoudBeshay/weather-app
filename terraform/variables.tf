@@ -17,7 +17,15 @@ variable "private_subnet_cidr" {
 variable "key_name" {
   description = "Name of your EC2 Key Pair"
   default = "blue"
+  type        = string
+  sensitive   = true
 }
+variable "public_key" {
+  description = "SSH public key content"
+  type        = string
+  sensitive   = true
+}
+
  
 variable "allowed_ssh_cidr" {
   default = "196.132.53.186/32" # Replace this or pass at runtime
