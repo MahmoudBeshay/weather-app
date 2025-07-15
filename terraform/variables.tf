@@ -28,5 +28,5 @@ variable "public_key" {
 
  
 variable "allowed_ssh_cidr" {
-  default = "196.132.53.186/32" # Replace this or pass at runtime
+  default = "156.200.127.2/32" # Replace this or pass at runtime
 }
