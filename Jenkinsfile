@@ -1,6 +1,9 @@
 pipeline {
   agent any
-
+ 
+  environment {
+    PRIVATE_KEY_FILE = 'ansible/k8s.pem'
+  }
   stages {
     stage('Terraform Provisioning') {
       steps {
@@ -35,9 +38,15 @@ pipeline {
       }
     }
 
-    stage('Deploy') {
+    stage('configure using Ansible') {
       steps {
-        echo 'Deploying...'
+        withCredentials([string(credentialsId: 'k8s-ssh-key', variable: 'PRIVATE_KEY')]) {
+          sh '''
+            mkdir -p ansible
+            echo "$PRIVATE_KEY" > $PRIVATE_KEY_FILE
+            chmod 600 $PRIVATE_KEY_FILE
+          '''
+        }
       }
     }
   }
