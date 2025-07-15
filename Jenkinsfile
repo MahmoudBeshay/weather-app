@@ -1,29 +1,20 @@
 pipeline {
   agent any 
 
-  environment {
-    AWS_ACCESS_KEY_ID     = credentials('accessKeyid')
-    AWS_SECRET_ACCESS_KEY = credentials('accessKeysec')
-    AWS_SESSION_TOKEN = credentials('sessionToken')
-    PUBLIC_KEY = credentials('awsKey')
-  }
+
 
   stages {
-    stage('Validate AWS Credentials') {
-     steps {
-    sh '''
-      echo "Testing AWS credentials..."
-      aws sts get-caller-identity
-    '''
-  }
-}
+
 
     stage('Provisioning Servers') {
       steps {
         dir('terraform/') {
           sh 'terraform init'
           echo 'Provisioning servers...'
-          sh 'terraform apply -auto-approve -var=public_key=${PUBLIC_KEY}'
+          withCredentials([string(credentialsId: 'my-public-key', variable: 'PUBLIC_KEY')]) {
+    sh "terraform apply -auto-approve -var='public_key=${PUBLIC_KEY}'"
+}
+
         }
       }
     }
