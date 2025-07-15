@@ -5,6 +5,7 @@ pipeline {
     AWS_ACCESS_KEY_ID     = credentials('accessKeyid')
     AWS_SECRET_ACCESS_KEY = credentials('accessKeysec')
     AWS_SESSION_TOKEN = credentials('sessionToken')
+    PUBLIC_KEY = credentials('awsKey')
   }
 
   stages {
@@ -22,7 +23,7 @@ pipeline {
         dir('terraform/') {
           sh 'terraform init'
           echo 'Provisioning servers...'
-          sh 'terraform apply -auto-approve'
+          sh 'terraform apply -auto-approve -var=public_key=${PUBLIC_KEY}'
         }
       }
     }
