@@ -40,7 +40,7 @@ pipeline {
 
     stage('configure using Ansible') {
       steps {
-        withCredentials([string(credentialsId: 'k8s-ssh-key', variable: 'PRIVATE_KEY')]) {
+        withCredentials([string(credentialsId: 'ansibleKey', variable: 'PRIVATE_KEY')]) {
           sh '''
             mkdir -p ansible
             echo "$PRIVATE_KEY" > $PRIVATE_KEY_FILE
@@ -49,5 +49,18 @@ pipeline {
         }
       }
     }
-  }
+   stage('Run Ansible Playbooks') {
+      steps {
+        dir('ansible/ansible-playbook') {
+          sh '''
+            ansible-playbook -i inventory.ini k8s.yaml
+            ansible-playbook -i inventory.ini master.yaml
+            ansible-playbook -i inventory.ini worker.yaml
+          '''
+        }
+      } 
+      } 
+ 
+
+}
 }
