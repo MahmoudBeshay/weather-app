@@ -40,7 +40,7 @@ pipeline {
 
     stage('Configure Using Ansible') {
   steps {
-    withCredentials([sshUserPrivateKey(credentialsId: 'ansibleSSHKey', keyFileVariable: 'SSH_KEY_FILE')]) {
+    withCredentials([sshUserPrivateKey(credentialsId: 'ansibleSshKey', keyFileVariable: 'SSH_KEY_FILE')]) {
       sh '''
         echo "[INFO] SSH key is at: $SSH_KEY_FILE"
         mkdir -p ansible
