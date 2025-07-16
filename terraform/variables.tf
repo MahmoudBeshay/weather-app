@@ -15,6 +15,11 @@ variable "private_subnet_cidr2" {
 variable "private_subnet_cidr" {
   default = "10.0.2.0/24"
 }
+variable "public_key" {
+  description = "SSH public key content"
+  type        = string
+  sensitive   = true
+}
 
 variable "key_name" {
   description = "Name of your EC2 Key Pair"
