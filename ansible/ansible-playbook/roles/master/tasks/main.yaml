@@ -12,6 +12,9 @@
     kubeadm init --pod-network-cidr=10.244.0.0/16
     --apiserver-cert-extra-sans={{ nlb_dns.value }}
   register: kubeadm_init
+  args:
+    creates: /etc/kubernetes/admin.conf
+
 
 - name: Create .kube directory
   file:
