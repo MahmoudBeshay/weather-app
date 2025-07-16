@@ -261,7 +261,7 @@ resource "aws_lb" "k8s_nlb" {
   internal           = false
   load_balancer_type = "network"
   subnets            = [aws_subnet.public.id]
-  vpc_id             = aws_vpc.main.id
+  depends_on = [aws_vpc.main]
   security_groups    = [aws_security_group.master_security_group.id]
   tags = {
     Name = "k8s-nlb"
@@ -312,7 +312,7 @@ resource "aws_lb" "k8s_alb" {
   load_balancer_type = "application"
   subnets            = [aws_subnet.private2.id,
 			aws_subnet.private.id]
-  vpc_id             = aws_vpc.main.id
+  depends_on = [aws_vpc.main]
   security_groups   = [aws_security_group.k8s_sg.id]
   tags = {
     Name = "k8s-alb"
