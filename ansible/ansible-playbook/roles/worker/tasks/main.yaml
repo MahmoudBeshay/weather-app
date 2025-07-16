@@ -1,2 +1,4 @@
 - name: Join workers to the cluster
-  command: "{{ join_command }}"
+  command: "{{ hostvars['master']['kubeadm_join_cmd'] }}"
+  args:
+    creates: /etc/kubernetes/kubelet.conf

@@ -40,10 +40,13 @@
 - name: Save join command to a fact
   shell: kubeadm token create --print-join-command
   register: join_command
+  delegate_to: master
+  run_once: true
 
-- name: Set join command fact
+- name: Set join command fact on master
   set_fact:
     kubeadm_join_cmd: "{{ join_command.stdout }}"
+  delegate_to: master
   run_once: true
 
 
