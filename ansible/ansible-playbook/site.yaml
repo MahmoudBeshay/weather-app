@@ -1,0 +1,19 @@
+- name: Setup Kubernetes Cluster
+  hosts: all
+  become: yes
+  roles:
+    - common
+
+- name: Configure Kubernetes Master
+  hosts: k8s_master
+  become: yes
+  vars_files:
+    - tf_outputs.json
+  roles:
+    - master
+
+- name: Join Kubernetes Workers
+  hosts: k8s_workers
+  become: yes
+  roles:
+    - worker
