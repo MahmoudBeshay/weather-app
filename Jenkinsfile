@@ -18,7 +18,7 @@ pipeline {
           ]) {
             dir('terraform') {
               sh '''
-                terraform init -migrate-state -force-copy -input=false
+                terraform init 
                 echo 'Provisioning servers...'
                 terraform apply -auto-approve -var="public_key=$PUBLIC_KEY"
            
