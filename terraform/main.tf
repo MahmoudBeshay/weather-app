@@ -22,11 +22,20 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   vpc_id     = aws_vpc.main.id
   cidr_block = var.private_subnet_cidr
- 
+  availability_zone = "us-east-1b"
   tags = {
     Name = "private-subnet"
   }
 }
+resource "aws_subnet" "private_2" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = var.private_subnet_cidr_2
+  availability_zone = "us-east-1a"  # for private
+  tags = {
+    Name = "private-subnet-2"
+  }
+}
+
  
 # Internet Gateway for public subnet + NAT Gateway
 resource "aws_internet_gateway" "igw" {
@@ -87,7 +96,17 @@ resource "aws_route_table_association" "private_assoc" {
   subnet_id      = aws_subnet.private.id
   route_table_id = aws_route_table.private_rt.id
 }
- 
+resource "aws_route_table_association" "private_assoc_2" {
+  subnet_id      = aws_subnet.private_2.id
+  route_table_id = aws_route_table.private_rt.id
+}
+locals {
+  worker_subnets = {
+    "worker-1" = aws_subnet.private.id
+    "worker-2" = aws_subnet.private_2.id
+  }
+}
+
 # Security Groups
 resource "aws_security_group" "bastion_sg" {
   name   = "bastion-sg"
@@ -154,19 +173,31 @@ resource "aws_instance" "bastion" {
     Name = "bastion"
   }
 }
- 
-# Kubernetes Nodes (1 master, 2 workers) in private subnet
-resource "aws_instance" "k8s_nodes" {
-  count                  = 3
-  ami                    = "ami-05ec1e5f7cfe5ef59" # Ubuntu 22.04 LTS
-  instance_type          = "t2.medium"
-  subnet_id              = aws_subnet.private.id
-  key_name               = var.key_name
+
+resource "aws_instance" "worker_nodes" {
+  for_each              = local.worker_subnets
+  ami                   = "ami-05ec1e5f7cfe5ef59"
+  instance_type         = "t2.medium"
+  subnet_id             = each.value
+  key_name              = var.key_name
   vpc_security_group_ids = [aws_security_group.k8s_sg.id]
- 
+
   tags = {
-    Name = "k8s-node-${count.index}"
-    Role = count.index == 0 ? "master" : "worker"
+    Name = each.key
+    Role = "worker"
+  }
+}
+
+resource "aws_instance" "master_node" {
+  ami                   = "ami-05ec1e5f7cfe5ef59"
+  instance_type         = "t2.medium"
+  subnet_id             = aws_subnet.private.id
+  key_name              = var.key_name
+  vpc_security_group_ids = [aws_security_group.k8s_sg.id]
+
+  tags = {
+    Name = "master-node"
+    Role = "master"
   }
 }
 
