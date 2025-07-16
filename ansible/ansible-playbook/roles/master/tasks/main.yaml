@@ -15,7 +15,6 @@
   args:
     creates: /etc/kubernetes/admin.conf
 
-
 - name: Create .kube directory
   file:
     path: /home/ubuntu/.kube
@@ -48,7 +47,6 @@
   delegate_to: "{{ item }}"
   with_items: "{{ groups['k8s_workers'] }}"
   run_once: true
-
 
 - name: Install Helm
   block:
