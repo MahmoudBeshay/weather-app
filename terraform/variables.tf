@@ -13,6 +13,9 @@ variable "public_subnet_cidr" {
 variable "private_subnet_cidr" {
   default = "10.0.2.0/24"
 }
+variable "private_subnet_cidr_2" {
+  default = "10.0.3.0/24"
+}
  
 variable "key_name" {
   description = "Name of your EC2 Key Pair"
