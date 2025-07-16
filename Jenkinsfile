@@ -18,7 +18,7 @@ pipeline {
           ]) {
             dir('terraform') {
               sh '''
-                terraform init
+                terraform init -migrate-state -force-copy -input=false
                 echo 'Provisioning servers...'
                 terraform apply -auto-approve -var="public_key=$PUBLIC_KEY"
            
@@ -57,9 +57,7 @@ pipeline {
       steps {
         dir('ansible/ansible-playbook') {
           sh '''
-            ansible-playbook -i inventory.ini k8s.yaml
-            ansible-playbook -i inventory.ini master.yaml
-            ansible-playbook -i inventory.ini worker.yaml
+            ansible-playook -i inventory.ini site.yaml
           '''
         }
       } 
