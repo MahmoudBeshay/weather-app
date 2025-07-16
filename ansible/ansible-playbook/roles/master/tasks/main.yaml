@@ -42,11 +42,13 @@
   command: kubeadm token create --print-join-command
   register: kubeadm_join_command
 
-- name: Set join command for all hosts
+- name: Set join command on workers
   set_fact:
     join_command: "{{ kubeadm_join_command.stdout }}"
-  delegate_to: localhost
+  delegate_to: "{{ item }}"
+  with_items: "{{ groups['k8s_workers'] }}"
   run_once: true
+
 
 - name: Install Helm
   block:
