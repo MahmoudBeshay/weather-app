@@ -11,8 +11,13 @@ if ! command -v jq &>/dev/null; then
 fi
 
 # Fetch bastion public IP and private IPs of k8s nodes
+# ✅ Correct: fetch each existing output
 BASTION_IP=$(terraform output -raw bastion_public_ip)
-PRIVATE_IPS=($(terraform output -json k8s_private_ips | jq -r '.[]'))
+MASTER_IP=$(terraform output -raw master_private_ip)
+WORKER_IPS=($(terraform output -json worker_private_ips | jq -r '.[]'))
+
+# ✅ Combine master + workers into PRIVATE_IPS (if needed)
+PRIVATE_IPS=($MASTER_IP "${WORKER_IPS[@]}")
 
 # Go back to project root
 cd ..
