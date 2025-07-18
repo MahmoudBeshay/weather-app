@@ -206,7 +206,7 @@ resource "aws_lb" "k8s_alb" {
   name               = "k8s-alb"
   internal           = false
   load_balancer_type = "application"
-  subnets            = [aws_subnet.private2.id]
+  subnets            = [aws_subnet.private.id]
   depends_on = [aws_vpc.main]
   security_groups   = [aws_security_group.k8s_sg.id]
   tags = {
@@ -246,8 +246,8 @@ resource "aws_lb_listener" "worker_listener" {
 
 # Attach workers to worker target group
 resource "aws_lb_target_group_attachment" "worker_attachments" {
-  count            = 2
+  for_each         = aws_instance.worker_nodes
   target_group_arn = aws_lb_target_group.worker_tg.arn
-  target_id        = aws_instance.worker[count.index].id
+  target_id        = each.value.id
   port             = 31130
 }
