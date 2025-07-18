@@ -17,3 +17,20 @@
   tasks:
     - name: Run join command
       command: "{{ hostvars[groups['k8s_master'][0]].join_command }}"
+
+- name: Install ingress-nginx on master
+  hosts: k8s_master
+  become: yes
+  tasks:
+    - name: Install ingress-nginx using Helm
+      kubernetes.core.helm:
+        name: ingress-nginx
+        chart_ref: ingress-nginx/ingress-nginx
+        release_namespace: ingress-nginx
+        create_namespace: true
+        values:
+          controller:
+            ingressClassResource:
+              name: nginx
+      environment:
+        KUBECONFIG: /home/ubuntu/.kube/config
