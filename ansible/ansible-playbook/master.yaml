@@ -11,6 +11,8 @@
       command: kubeadm config images pull
     - name: Initialize Kubernetes master
       command: kubeadm init --pod-network-cidr=10.244.0.0/16
+      args:
+        creates: /etc/kubernetes/admin.conf
       register: kubeadm_init
     - name: Create .kube directory
       file:
