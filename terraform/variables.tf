@@ -31,5 +31,6 @@ variable "public_key" {
 
  
 variable "allowed_ssh_cidr" {
-  default = "41.40.229.51/32" # Replace this or pass at runtime
+  description = "Your current public IP for SSH access"
+  type        = string
 }

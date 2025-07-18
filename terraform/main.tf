@@ -201,3 +201,53 @@ resource "aws_instance" "master_node" {
   }
 }
 
+# ALB for Worker Node traffic (HTTP 31130)
+resource "aws_lb" "k8s_alb" {
+  name               = "k8s-alb"
+  internal           = false
+  load_balancer_type = "application"
+  subnets            = [aws_subnet.private2.id]
+  depends_on = [aws_vpc.main]
+  security_groups   = [aws_security_group.k8s_sg.id]
+  tags = {
+    Name = "k8s-alb"
+  }
+}
+resource "aws_lb_target_group" "worker_tg" {
+  name        = "worker-tg"
+  port        = 31130
+  protocol    = "HTTP"
+  target_type = "instance"
+  vpc_id      = aws_vpc.main.id
+
+  health_check {
+    protocol = "HTTP"
+    port     = "31130"
+    path     = "/"
+    matcher  = "200"
+  }
+
+  tags = {
+    Name = "tg-worker"
+  }
+}
+
+# Listener for Worker Nodes
+resource "aws_lb_listener" "worker_listener" {
+  load_balancer_arn = aws_lb.k8s_alb.arn
+  port              = 31130
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.worker_tg.arn
+  }
+}
+
+# Attach workers to worker target group
+resource "aws_lb_target_group_attachment" "worker_attachments" {
+  count            = 2
+  target_group_arn = aws_lb_target_group.worker_tg.arn
+  target_id        = aws_instance.worker[count.index].id
+  port             = 31130
+}

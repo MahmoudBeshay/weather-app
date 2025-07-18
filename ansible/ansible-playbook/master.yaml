@@ -56,3 +56,21 @@
       apt:
         name: helm
         state: present
+    - name: Add ingress-nginx Helm repository
+      command: helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+      args:
+        creates: /root/.cache/helm/repository/ingress-nginx-index.yaml
+
+    - name: Update Helm repositories
+      command: helm repo update
+
+    - name: Install ingress-nginx using Helm
+      kubernetes.core.helm:
+        name: ingress-nginx
+        chart_ref: ingress-nginx/ingress-nginx
+        release_namespace: ingress-nginx
+        create_namespace: true
+        values:
+          controller:
+            ingressClassResource:
+              name: nginx

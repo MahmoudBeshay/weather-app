@@ -18,9 +18,13 @@ pipeline {
           ]) {
             dir('terraform') {
               sh '''
-                terraform init
-                echo 'Provisioning servers...'
-                terraform apply -auto-approve -var="public_key=$PUBLIC_KEY"
+                 terraform init
+                 echo 'Fetching current public IP...'
+                 MY_IP=$(curl -s https://checkip.amazonaws.com)/32
+                 echo "Using allowed_ssh_cidr=${MY_IP}"
+                 terraform apply -auto-approve \
+                  -var="public_key=$PUBLIC_KEY" \
+                  -var="allowed_ssh_cidr=${MY_IP}"
            
               '''
             }
