@@ -206,7 +206,8 @@ resource "aws_lb" "k8s_alb" {
   name               = "k8s-alb"
   internal           = false
   load_balancer_type = "application"
-  subnets            = [aws_subnet.private.id]
+  subnets            = [aws_subnet.private.id,
+                       aws_subnet.private_2.id]
   depends_on = [aws_vpc.main]
   security_groups   = [aws_security_group.k8s_sg.id]
   tags = {
