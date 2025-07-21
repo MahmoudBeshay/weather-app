@@ -32,5 +32,10 @@
           controller:
             ingressClassResource:
               name: nginx
+            service:
+              type: NodePort
+              nodePorts:
+                http: 31130
+                https: 31131
       environment:
         KUBECONFIG: /home/ubuntu/.kube/config

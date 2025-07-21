@@ -201,15 +201,41 @@ resource "aws_instance" "master_node" {
   }
 }
 
+#security group for alb
+resource "aws_security_group" "alb_sg" {
+  name   = "alb-sg"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow HTTP from anywhere"
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
+  }
+
+  tags = {
+    Name = "alb-sg"
+  }
+}
+
 # ALB for Worker Node traffic (HTTP 31130)
 resource "aws_lb" "k8s_alb" {
   name               = "k8s-alb"
   internal           = false
   load_balancer_type = "application"
   subnets            = [aws_subnet.private.id,
-                       aws_subnet.private_2.id]
+                       aws_subnet.public.id]
   depends_on = [aws_vpc.main]
-  security_groups   = [aws_security_group.k8s_sg.id]
+  security_groups   = [aws_security_group.alb_sg.id]
   tags = {
     Name = "k8s-alb"
   }
