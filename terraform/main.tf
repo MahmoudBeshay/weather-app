@@ -146,6 +146,12 @@ resource "aws_security_group" "k8s_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.bastion_sg.id]
   }
+  # allow HTTP traffic from ALB to worker nodes
+  ingress {
+    from_port       = 31130
+    to_port         = 31130
+    protocol        = "tcp"
+    security_groups = [aws_security_group.alb_sg.id]
  
   # Outbound to internet (via NAT)
   egress {
