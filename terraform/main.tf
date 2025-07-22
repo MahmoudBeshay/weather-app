@@ -138,7 +138,7 @@ resource "aws_security_group" "k8s_sg" {
     protocol  = "-1"
     self      = true
   }
- 
+
   # Allow SSH only from bastion host
   ingress {
     from_port       = 22
@@ -152,7 +152,7 @@ resource "aws_security_group" "k8s_sg" {
     to_port         = 31130
     protocol        = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
- 
+  }
   # Outbound to internet (via NAT)
   egress {
     from_port   = 0
@@ -161,6 +161,7 @@ resource "aws_security_group" "k8s_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+
 #import key pair name blue    
 resource "aws_key_pair" "k8s_key" {
   key_name   = var.key_name
