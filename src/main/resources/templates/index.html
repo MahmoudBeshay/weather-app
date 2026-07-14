@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Weather App</title>
+  <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+  <main class="card">
+    <h1>Weather</h1>
+    <form method="post" th:action="@{/}" class="search-form">
+      <input type="text" name="city" placeholder="Enter a city, e.g. London" th:value="${city}" autofocus required>
+      <button type="submit">Search</button>
+    </form>
+
+    <p class="error" th:if="${error}" th:text="${error}"></p>
+
+    <section class="result" th:if="${weather}">
+      <h2 th:text="${weather.city} + ', ' + ${weather.country}"></h2>
+      <p class="temp" th:text="${weather.temp} + '°C'"></p>
+      <p class="desc" th:text="${weather.description}"></p>
+      <p class="feels-like" th:text="'Feels like ' + ${weather.feelsLike} + '°C'"></p>
+      <div class="details">
+        <span th:text="'Humidity: ' + ${weather.humidity} + '%'"></span>
+        <span th:text="'Wind: ' + ${weather.windSpeed} + ' km/h'"></span>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
