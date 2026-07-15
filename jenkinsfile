@@ -8,6 +8,13 @@ pipeline{
         }
         stage('Test'){
             steps{
+                withCredentials([usernamePassword(
+                          credentialsId: 'docker-sec',
+                          usernameVariable: 'USER',
+                          passwordVariable: 'PASS')]) {
+                          echo 'deploy.sh $USER $PASS'
+                        }
+
                 echo 'Testing...'
             }
         }
